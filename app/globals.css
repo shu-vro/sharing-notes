@@ -3,31 +3,76 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+    /* --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --background-end-rgb: 255, 255, 255; */
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
   }
-}
+} */
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+    color: rgb(var(--foreground-rgb));
+    margin: 0;
+    padding: 2rem;
+    box-sizing: border-box;
+    height: 100vh;
+    position: relative;
+    --bg-color: black;
+    --base-color: #ffffff25;
+    --bg-grid-size: 60px;
+    --bg-grid-percent: 1%;
+    --primary-color: #1971c2;
+    background: var(--bg-color);
+}
+
+body::before,
+body::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        var(--base-color) 0%,
+        var(--base-color) var(--bg-grid-percent),
+        var(--bg-color) var(--bg-grid-percent),
+        var(--bg-color) 100%
+    );
+    background-size: var(--bg-grid-size) var(--bg-grid-size);
+    width: 100%;
+    height: 100%;
+    mix-blend-mode: lighten;
+    user-select: none;
+    pointer-events: none;
+}
+
+body::after {
+    background: repeating-linear-gradient(
+        90deg,
+        var(--base-color) 0%,
+        var(--base-color) var(--bg-grid-percent),
+        var(--bg-color) var(--bg-grid-percent),
+        var(--bg-color) 100%
+    );
+    background-size: var(--bg-grid-size) var(--bg-grid-size);
+    mix-blend-mode: lighten;
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+    .text-balance {
+        text-wrap: balance;
+    }
+
+    .primary-border {
+        @apply border-2 border-solid border-primary rounded-2xl;
+    }
 }

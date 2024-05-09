@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useContext, createContext } from "react";
 
 const Context = createContext({} as TRefreshContext);

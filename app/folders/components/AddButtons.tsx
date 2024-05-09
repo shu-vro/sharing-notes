@@ -33,9 +33,9 @@ export default function AddButtons() {
                 undefined
             );
 
-            if (slug.length > 1) {
-                slug.pop();
-            }
+            // if (slug.length > 1) {
+            //     slug.pop();
+            // }
             setRefresh(t => t + 1);
         } else {
             alert("Base Folder not found");
@@ -48,7 +48,7 @@ export default function AddButtons() {
                 <button
                     type="button"
                     className="capitalize primary-border p-4"
-                    onClick={async () => await onAddFolderClick}>
+                    onClick={async () => await onAddFolderClick()}>
                     <span>+</span>add folder
                 </button>
                 <button

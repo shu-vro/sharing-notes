@@ -10,10 +10,12 @@ import Ready from "../components/Ready";
 import React, { useState, useEffect } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { firestoreDb } from "@/firebase";
+import { RefreshProvider, useRefresh } from "../components/RefreshContext";
 
 export default function Page({ params }: { params: { slug: string[] } }) {
     const [data, setData] = useState<any[]>([]);
     params.slug = params.slug || [];
+    const { refresh } = useRefresh();
 
     useEffect(() => {
         // process slug
@@ -37,7 +39,7 @@ export default function Page({ params }: { params: { slug: string[] } }) {
         };
 
         fetchData();
-    }, [params.slug]);
+    }, [params.slug, refresh]);
 
     console.log("/" + (params.slug?.join("/") || ""), params.slug);
 
@@ -45,33 +47,35 @@ export default function Page({ params }: { params: { slug: string[] } }) {
         <Ready>
             <Header />
 
-            <AddButtons />
-            <BreadcrumbComponent
-                base="/folders"
-                path={
-                    // MARK: add shortcut names for each breadcrumb
-                    params.slug || []
-                }
-            />
-            <div>
-                <h1 className="text-2xl my-7">Folders</h1>
-                <FolderSection
-                    data={data}
-                    prevPath={
-                        params.slug?.length
-                            ? "/" + (params.slug?.join("/") || "")
-                            : ""
+            <RefreshProvider>
+                <AddButtons />
+                <BreadcrumbComponent
+                    base="/folders"
+                    path={
+                        // MARK: add shortcut names for each breadcrumb
+                        params.slug || []
                     }
                 />
-                {/* <h1 className="text-2xl my-7">Files</h1> */}
-                {/* <div className="flex justify-start flex-wrap gap-6">
+                <div>
+                    <h1 className="text-2xl my-7">Folders</h1>
+                    <FolderSection
+                        data={data}
+                        prevPath={
+                            params.slug?.length
+                                ? "/" + (params.slug?.join("/") || "")
+                                : ""
+                        }
+                    />
+                    {/* <h1 className="text-2xl my-7">Files</h1> */}
+                    {/* <div className="flex justify-start flex-wrap gap-6">
                     {Array(20)
                         .fill(0)
                         .map((_, i) => (
                             <File name="File-1 with a big name" key={i} />
                         ))}
                 </div> */}
-            </div>
+                </div>
+            </RefreshProvider>
         </Ready>
     );
 }

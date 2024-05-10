@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-function isValidString(str: string) {
+export function isValidFolderId(str: string) {
     // Check for valid UTF-8 characters
     if (!/^[\u0000-\uFFFF]*$/.test(str)) {
         return false;
@@ -26,8 +26,13 @@ function isValidString(str: string) {
         return false;
     }
 
-    // Check against the regular expression __.*__
-    if (/__.*__/.test(str)) {
+    // // Check against the regular expression __.*__
+    // if (/$__.*__&/.test(str)) {
+    //     return false;
+    // }
+
+    // such a check that does not allow names containing __ at the starting or ending of string
+    if (/^.*__|.*__$/.test(str)) {
         return false;
     }
 

@@ -18,6 +18,7 @@ import {
 import {
     connectFirestoreEmulator,
     doc,
+    getDoc,
     initializeFirestore,
     persistentLocalCache,
     persistentMultipleTabManager,
@@ -66,6 +67,10 @@ export async function createFolder(
     if (!folderName) {
         folderName = "folder-" + nanoid(5);
     }
+    const checkDoc = await getDoc(doc(firestoreDb, path, folderName));
+    if (checkDoc.exists()) {
+        throw new Error("Folder already exists");
+    }
     await setDoc(
         doc(firestoreDb, path, folderName),
         {
@@ -85,7 +90,12 @@ export async function signInWithGoogle() {
         let provider = new GoogleAuthProvider();
         let { user } = await signInWithPopup(auth, provider);
         // set a document in firestore
-        await createFolder(user.uid, [], "folders", user.displayName!);
+        await createFolder(
+            user.uid,
+            [],
+            "folders",
+            user.displayName! + nanoid(5)
+        );
         return user;
     } catch (e: any) {
         console.warn("There was an error at signInWithGoogle", e);

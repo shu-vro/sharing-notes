@@ -85,6 +85,25 @@ export async function createFolder(
     );
 }
 
+export async function createFile(fileName: string, path: string, url: string) {
+    if (!fileName) {
+        fileName = "file-" + nanoid(5);
+    }
+    if (!url) {
+        throw new Error("URL is not specified");
+    }
+    await setDoc(
+        doc(firestoreDb, path, fileName),
+        {
+            type: "file",
+            fileName,
+            url,
+            createdAt: serverTimestamp(),
+        },
+        { merge: true }
+    );
+}
+
 export async function signInWithGoogle() {
     try {
         let provider = new GoogleAuthProvider();

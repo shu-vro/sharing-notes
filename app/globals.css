@@ -76,3 +76,16 @@ body::after {
         @apply border-2 border-solid border-primary rounded-2xl;
     }
 }
+
+.animate-rise {
+    animation: rise 0.15s ease-in-out;
+}
+
+@keyframes rise {
+    0% {
+        transform: scaleY(0);
+    }
+    100% {
+        transform: scaleY(100%);
+    }
+}

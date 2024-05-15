@@ -1,11 +1,16 @@
+import Link from "next/link";
 import React from "react";
 
-export default function File({ name }: { name: string }) {
+export default function File({ name, path }: { name: string; path: string }) {
     return (
-        <div className="primary-border rounded-2xl w-[clamp(150px,4vw,350px)]">
+        <Link
+            href={path}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="primary-border rounded-2xl w-[clamp(150px,4vw,350px)]">
             <FileIcon />
             <div className="text-center">{name}</div>
-        </div>
+        </Link>
     );
 }
 

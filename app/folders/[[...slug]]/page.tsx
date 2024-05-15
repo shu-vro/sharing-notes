@@ -11,9 +11,11 @@ import React, { useState, useEffect } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { firestoreDb } from "@/firebase";
 import { useRefresh } from "../components/RefreshContext";
+import FileSection from "../components/FileSection";
 
 export default function Page({ params }: { params: { slug: string[] } }) {
-    const [data, setData] = useState<any[]>([]);
+    const [folderData, setFolderData] = useState<any[]>([]);
+    const [fileData, setFileData] = useState<any[]>([]);
     params.slug = params.slug || [];
     const { refresh } = useRefresh();
 
@@ -25,7 +27,7 @@ export default function Page({ params }: { params: { slug: string[] } }) {
             decodeURIComponent(e)
         );
 
-        const fetchData = async () => {
+        const fetchFolderData = async () => {
             const q = query(
                 collection(firestoreDb, ...(slug as [string, ...string[]])),
                 where("type", "==", "folder")
@@ -35,10 +37,29 @@ export default function Page({ params }: { params: { slug: string[] } }) {
             querySnapshot.forEach(doc => {
                 res.push(doc.data());
             });
-            setData(res);
+            setFolderData(res);
         };
 
-        fetchData();
+        fetchFolderData();
+
+        const fetchFileData = async () => {
+            if (slug.length > 1) {
+                slug.pop();
+                slug.push("files");
+            }
+            const q = query(
+                collection(firestoreDb, ...(slug as [string, ...string[]])),
+                where("type", "==", "file")
+            );
+            const querySnapshot = await getDocs(q);
+            let res: any[] = [];
+            querySnapshot.forEach(doc => {
+                res.push(doc.data());
+            });
+            setFileData(res);
+        };
+
+        fetchFileData();
     }, [params.slug, refresh]);
 
     return (
@@ -56,21 +77,24 @@ export default function Page({ params }: { params: { slug: string[] } }) {
             <div>
                 <h1 className="text-2xl my-7">Folders</h1>
                 <FolderSection
-                    data={data}
+                    data={folderData}
                     prevPath={
                         params.slug?.length
                             ? "/" + (params.slug?.join("/") || "")
                             : ""
                     }
                 />
-                {/* <h1 className="text-2xl my-7">Files</h1> */}
-                {/* <div className="flex justify-start flex-wrap gap-6">
-                    {Array(20)
-                        .fill(0)
-                        .map((_, i) => (
-                            <File name="File-1 with a big name" key={i} />
-                        ))}
-                </div> */}
+                <h1 className="text-2xl my-7">Files</h1>
+                <div className="flex justify-start flex-wrap gap-6">
+                    <FileSection
+                        data={fileData}
+                        prevPath={
+                            params.slug?.length
+                                ? "/" + (params.slug?.join("/") || "")
+                                : ""
+                        }
+                    />
+                </div>
             </div>
         </Ready>
     );

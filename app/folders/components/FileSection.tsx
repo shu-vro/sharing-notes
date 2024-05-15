@@ -13,8 +13,8 @@ export default function FileSection({
         <div className="flex justify-start flex-wrap gap-6">
             {data.map(file => (
                 <File
-                    name={file.folderName}
-                    key={file.folderName}
+                    name={file.fileName}
+                    key={file.fileName}
                     // file={file}
                     path={file.url}
                 />

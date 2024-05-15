@@ -38,3 +38,7 @@ export function isValidFolderId(str: string) {
 
     return true;
 }
+export const acceptedExt = (types: Array<string> | undefined) => {
+    if (types === undefined) return "";
+    return types.map(type => `.${type.toLowerCase()}`).join(",");
+};

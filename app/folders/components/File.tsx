@@ -8,13 +8,13 @@ export default function File({ name, path }: { name: string; path: string }) {
             target="_blank"
             rel="noopener noreferrer"
             className="primary-border rounded-2xl w-[clamp(150px,4vw,350px)]">
-            <FileIcon />
-            <div className="text-center">{name}</div>
+            <FileIcon ext={name.split(".").at(-1)} />
+            <div className="text-center break-words">{name}</div>
         </Link>
     );
 }
 
-function FileIcon() {
+function FileIcon({ ext }: { ext?: string }) {
     return (
         <svg
             version="1.1"
@@ -94,13 +94,13 @@ function FileIcon() {
                 <text
                     x="0"
                     y="51.536"
-                    fontSize="36px"
+                    fontSize="30px"
                     fill="#1971c2"
                     textAnchor="start"
-                    style={{ whiteSpace: "pre" }}
+                    className="whitespace-pre text-ellipsis"
                     direction="ltr"
                     dominantBaseline="alphabetic">
-                    py
+                    {ext}
                 </text>
             </g>
         </svg>

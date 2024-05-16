@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import LoginButton from "../../login/components/LoginButton";
+import { toast } from "sonner";
 
 const localClasses = {
     Buttons:
@@ -46,6 +47,7 @@ export default function Menu() {
                     onClick={async () => {
                         try {
                             await signOut(auth);
+                            toast.success("Successfully logged out!");
                             push("/login");
                         } catch (error) {}
                     }}>

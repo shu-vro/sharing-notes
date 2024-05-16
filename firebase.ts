@@ -27,6 +27,7 @@ import {
 } from "firebase/firestore";
 import { getStorage, connectStorageEmulator } from "firebase/storage";
 import { nanoid } from "nanoid";
+import { toast } from "sonner";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -69,7 +70,8 @@ export async function createFolder(
     }
     const checkDoc = await getDoc(doc(firestoreDb, path, folderName));
     if (checkDoc.exists()) {
-        throw new Error("Folder already exists");
+        console.error("Folder already exists");
+        return;
     }
     await setDoc(
         doc(firestoreDb, path, folderName),
@@ -109,15 +111,11 @@ export async function signInWithGoogle() {
         let provider = new GoogleAuthProvider();
         let { user } = await signInWithPopup(auth, provider);
         // set a document in firestore
-        await createFolder(
-            user.uid,
-            [],
-            "folders",
-            user.displayName! + nanoid(5)
-        );
+        await createFolder(user.uid, [], "folders", user.email!);
         return user;
     } catch (e: any) {
         console.warn("There was an error at signInWithGoogle", e);
+        toast.error(e.message);
         await signOut(auth);
         return e.code as string;
     }

@@ -113,7 +113,7 @@ function BreadcrumbComponent({
         );
     }
     return (
-        <Breadcrumb>
+        <Breadcrumb className="mt-3">
             <BreadcrumbList>
                 <BreadcrumbItem>
                     <BreadcrumbPage>

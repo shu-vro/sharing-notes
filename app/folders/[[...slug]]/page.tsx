@@ -66,7 +66,7 @@ export default function Page({ params }: { params: { slug: string[] } }) {
         <Ready>
             <Header />
 
-            <AddButtons />
+            {params.slug.length ? <AddButtons /> : null}
             <BreadcrumbComponent
                 base="/folders"
                 path={

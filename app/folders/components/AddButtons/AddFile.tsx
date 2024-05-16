@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { useRefresh } from "../RefreshContext";
 import Dialog from "../Dialog";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { toast } from "sonner";
 
 export default function AddFile() {
     const params = useParams();
@@ -28,10 +29,10 @@ export default function AddFile() {
         );
         if (querySnapshot.exists()) {
             if (!auth.currentUser) {
-                return alert("Not logged in");
+                return toast.info("Not logged in");
             }
             if (!isValidFolderId(folderName)) {
-                return alert("Invalid folder name");
+                return toast.info("Invalid folder name");
             }
             if (slug.length > 1) {
                 slug.push("files");
@@ -39,7 +40,6 @@ export default function AddFile() {
             try {
                 let url = "";
                 if (file) {
-                    console.log(file, "inside check");
                     const storageRef = await uploadBytes(
                         ref(
                             storage,
@@ -49,21 +49,21 @@ export default function AddFile() {
                                 ) || []
                             ).join("/")}/${file.name}`
                         ),
-                        // ref(storage, auth.currentUser.uid + "/" + file.name),
                         file
                     );
                     url = await getDownloadURL(storageRef.ref);
                     console.log(url);
+                    toast.success("File created!");
                 }
                 await createFile(fileName, slug.join("/"), url);
-            } catch (error) {
+            } catch (error: any) {
                 console.log(error);
-                return alert(error);
+                return toast.info(error.message);
             }
 
             setRefresh(t => t + 1);
         } else {
-            alert("Base Folder not found");
+            toast.info("Base Folder not found");
         }
     };
     return (

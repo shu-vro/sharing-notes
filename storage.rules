@@ -5,8 +5,13 @@ rules_version = '2';
 //    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
 service firebase.storage {
   match /b/{bucket}/o {
-    match /{allPaths=**} {
-      allow read, write: if true;
+    match /{userId}/{email}/{allPaths=**} {
+      allow read: if true;
+      allow write: if isVerifiedUser(userId, email);
     }
   }
+}
+
+function isVerifiedUser(userId, email) {
+	return request.auth != null && (request.auth.uid == userId) && (request.auth.token.email == email)
 }

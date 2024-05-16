@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import React, { useState } from "react";
 import { useRefresh } from "../RefreshContext";
 import Dialog from "../Dialog";
+import { toast } from "sonner";
 
 export default function AddFolder() {
     const params = useParams();
@@ -25,10 +26,10 @@ export default function AddFolder() {
         );
         if (querySnapshot.exists()) {
             if (!auth.currentUser) {
-                return alert("Not logged in");
+                return toast.error("Not logged in");
             }
             if (!isValidFolderId(folderName)) {
-                return alert("Invalid folder name");
+                return toast.info("Invalid folder name");
             }
             if (slug.length > 1) {
                 slug.push("folders");
@@ -40,13 +41,14 @@ export default function AddFolder() {
                     slug.join("/"),
                     folderName
                 );
-            } catch (error) {
-                return alert(error);
+                toast.success("Folder created!");
+            } catch (error: any) {
+                return toast.error(error.message);
             }
 
             setRefresh(t => t + 1);
         } else {
-            alert("Base Folder not found");
+            toast.error("Base Folder not found");
         }
     };
     return (

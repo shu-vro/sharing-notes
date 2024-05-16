@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "sonner";
 
 const font = Montserrat({ subsets: ["latin"] });
 
@@ -17,7 +18,10 @@ export default function RootLayout({
     return (
         <html lang="en">
             <title>Note Sharing</title>
-            <body className={font.className}>{children}</body>
+            <body className={font.className}>
+                {children}
+                <Toaster expand richColors />
+            </body>
         </html>
     );
 }

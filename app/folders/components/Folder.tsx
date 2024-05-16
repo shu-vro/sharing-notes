@@ -15,7 +15,7 @@ export default function Folder({
             href={`/folders` + path}
             className="block primary-border rounded-2xl w-[clamp(200px,5vw,450px)] cursor-pointer animate-rise">
             <FolderIcon />
-            <div className="text-center">{name}</div>
+            <div className="text-center break-words">{name}</div>
         </Link>
     );
 }

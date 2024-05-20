@@ -7,6 +7,7 @@ import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import LoginButton from "../../login/components/LoginButton";
 import { toast } from "sonner";
+import Link from "next/link";
 
 const localClasses = {
     Buttons:
@@ -38,9 +39,13 @@ export default function Menu() {
                 <div className="primary-border mb-4 rounded-2xl p-3">
                     {auth.currentUser?.displayName}
                 </div>
-                <button type="button" className={cn(localClasses.Buttons)}>
+                <Link
+                    href={`/folders/${
+                        auth.currentUser ? auth.currentUser.email : ""
+                    }`}
+                    className={cn(localClasses.Buttons)}>
                     My Notes
-                </button>
+                </Link>
                 <button
                     type="button"
                     className={cn(localClasses.Buttons, "last:mb-2 capitalize")}

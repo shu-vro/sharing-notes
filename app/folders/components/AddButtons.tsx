@@ -6,7 +6,7 @@ export default function AddButtons() {
     return (
         <div className="flex">
             <div className="grow"></div>
-            <div className="my-4">
+            <div className="my-4 flex flex-row gap-3">
                 <AddFolder />
                 <AddFile />
             </div>

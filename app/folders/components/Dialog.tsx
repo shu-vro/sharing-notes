@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import React from "react";
+import React, { useEffect } from "react";
 
 export default function Dialog({
     title,
@@ -16,6 +16,20 @@ export default function Dialog({
     open: boolean;
     setOpen: (open: boolean) => void;
 }) {
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                setOpen(false);
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [setOpen]);
+
     return (
         <div
             className={cn(

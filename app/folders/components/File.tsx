@@ -1,16 +1,26 @@
-import Link from "next/link";
 import React from "react";
+import Checkbox from "./Checkbox";
 
 export default function File({ name, path }: { name: string; path: string }) {
     return (
-        <Link
-            href={path}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="primary-border rounded-2xl w-[clamp(150px,4vw,350px)]">
-            <FileIcon ext={name.split(".").at(-1)} />
-            <div className="text-center break-words">{name}</div>
-        </Link>
+        <>
+            <label
+                htmlFor={path}
+                className="primary-border rounded-2xl w-[clamp(150px,4vw,350px)] animate-rise cursor-pointer"
+                onClick={e => {
+                    console.log("going outside");
+                }}
+                onDoubleClick={() => {
+                    window.open(path, "_blank");
+                }}>
+                <div className="flex justify-between flex-row p-2">
+                    <Checkbox label={name} path={path} />
+                    <Ellipsis />
+                </div>
+                <FileIcon ext={name.split(".").at(-1)} />
+                <div className="text-center break-words">{name}</div>
+            </label>
+        </>
     );
 }
 
@@ -103,6 +113,24 @@ function FileIcon({ ext }: { ext?: string }) {
                     {ext}
                 </text>
             </g>
+        </svg>
+    );
+}
+
+function Ellipsis({}) {
+    return (
+        <svg
+            stroke="currentColor"
+            fill="currentColor"
+            strokeWidth="0"
+            viewBox="0 0 128 512"
+            width={20}
+            height={20}
+            onClick={e => {
+                e.stopPropagation();
+            }}
+            xmlns="http://www.w3.org/2000/svg">
+            <path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z"></path>
         </svg>
     );
 }

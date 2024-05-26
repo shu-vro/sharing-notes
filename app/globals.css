@@ -22,7 +22,8 @@
 body {
     color: rgb(var(--foreground-rgb));
     margin: 0;
-    padding: 2rem;
+    padding: 0.5rem;
+    @apply sm:p-8;
     box-sizing: border-box;
     height: 100vh;
     position: relative;

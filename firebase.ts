@@ -28,18 +28,6 @@ import {
 import { getStorage, connectStorageEmulator } from "firebase/storage";
 import { nanoid } from "nanoid";
 import { toast } from "sonner";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// const firebaseConfig = {
-//     apiKey: "AIzaSyAzsb3HYq6oT3eNMjjT-w6jUSDj-GcEyXQ",
-//     authDomain: "c-dule.firebaseapp.com",
-//     projectId: "c-dule",
-//     storageBucket: "c-dule.appspot.com",
-//     messagingSenderId: "574855510160",
-//     appId: "1:574855510160:web:597b9e13d64d54c11d8015",
-// };
 
 // Initialize Firebase
 let app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
@@ -100,6 +88,7 @@ export async function createFile(fileName: string, path: string, url: string) {
             type: "file",
             fileName,
             url,
+            deleted: false,
             createdAt: serverTimestamp(),
         },
         { merge: true }

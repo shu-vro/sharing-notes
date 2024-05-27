@@ -3,13 +3,11 @@ import { isValidFolderId } from "@/lib/utils";
 import { doc, getDoc } from "firebase/firestore";
 import { useParams } from "next/navigation";
 import React, { useState } from "react";
-import { useRefresh } from "../RefreshContext";
 import Dialog from "../Dialog";
 import { toast } from "sonner";
 
 export default function AddFolder() {
     const params = useParams();
-    const { setRefresh } = useRefresh();
     const [openFolderDialog, setOpenFolderDialog] = useState(false);
     const [folderName, setFolderName] = useState("");
 
@@ -45,8 +43,6 @@ export default function AddFolder() {
             } catch (error: any) {
                 return toast.error(error.message);
             }
-
-            setRefresh(t => t + 1);
         } else {
             toast.error("Base Folder not found");
         }

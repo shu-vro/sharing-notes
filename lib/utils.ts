@@ -32,7 +32,7 @@ export function isValidFolderId(str: string) {
     // }
 
     // such a check that does not allow names containing __ at the starting or ending of string
-    if (/^.*__|.*__$/.test(str)) {
+    if (/^__.*__$/.test(str)) {
         return false;
     }
 

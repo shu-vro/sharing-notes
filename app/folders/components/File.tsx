@@ -1,25 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import Checkbox from "./Checkbox";
+import Popover, { localClasses } from "./Popover";
+import { deleteDoc, doc, setDoc } from "firebase/firestore";
+import { firestoreDb } from "@/firebase";
+import { toast } from "sonner";
+import Dialog from "./Dialog";
+import { isValidFolderId } from "@/lib/utils";
 
-export default function File({ name, path }: { name: string; path: string }) {
+export default function File({
+    file,
+    path,
+    rawPath,
+}: {
+    file: { [x: string]: any };
+    path: string;
+    rawPath: string;
+}) {
     return (
         <>
-            <label
-                htmlFor={path}
+            <div
+                // htmlFor={path}
                 className="primary-border rounded-2xl w-[clamp(150px,4vw,350px)] animate-rise cursor-pointer"
-                onClick={e => {
-                    console.log("going outside");
-                }}
                 onDoubleClick={() => {
                     window.open(path, "_blank");
                 }}>
-                <div className="flex justify-between flex-row p-2">
-                    <Checkbox label={name} path={path} />
-                    <Ellipsis />
+                <div className="flex justify-between flex-row p-2 relative">
+                    <Checkbox label={file.fileName} path={path} />
+                    <Ellipsis path={rawPath} file={file} />
                 </div>
-                <FileIcon ext={name.split(".").at(-1)} />
-                <div className="text-center break-words">{name}</div>
-            </label>
+                <FileIcon ext={file.fileName.split(".").at(-1)} />
+                <div className="text-center break-words">{file.fileName}</div>
+            </div>
         </>
     );
 }
@@ -117,20 +128,98 @@ function FileIcon({ ext }: { ext?: string }) {
     );
 }
 
-function Ellipsis({}) {
+function Ellipsis({
+    path,
+    file,
+}: {
+    path: string;
+    file: { [x: string]: any };
+}) {
+    const [toggle, setToggle] = useState(false);
+    const [fileName, setFileName] = useState(file.fileName);
+    const [openRenameDialog, setOpenRenameDialog] = useState(false);
     return (
-        <svg
-            stroke="currentColor"
-            fill="currentColor"
-            strokeWidth="0"
-            viewBox="0 0 128 512"
-            width={20}
-            height={20}
-            onClick={e => {
-                e.stopPropagation();
-            }}
-            xmlns="http://www.w3.org/2000/svg">
-            <path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z"></path>
-        </svg>
+        <>
+            <button
+                type="button"
+                onClick={e => {
+                    e.stopPropagation();
+                    setToggle(!toggle);
+                }}>
+                <svg
+                    stroke="currentColor"
+                    fill="currentColor"
+                    strokeWidth="0"
+                    viewBox="0 0 128 512"
+                    width={20}
+                    height={20}
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z"></path>
+                </svg>
+            </button>
+            <Dialog
+                open={openRenameDialog}
+                setOpen={setOpenRenameDialog}
+                title="Rename File"
+                onConfirm={async () => {
+                    if (!isValidFolderId(fileName)) {
+                        toast.error("Invalid file name!");
+                        return;
+                    }
+                    await deleteDoc(doc(firestoreDb, path));
+                    let path_array = path.split("/");
+                    path_array[path_array.length - 1] = fileName;
+                    await setDoc(
+                        doc(firestoreDb, path_array.join("/")),
+                        { ...file, fileName },
+                        { merge: true }
+                    );
+                }}>
+                <div>
+                    <input
+                        value={fileName}
+                        onChange={e => setFileName(e.target.value)}
+                        type="text"
+                        id="fileName"
+                        className="w-full primary-border p-2 bg-transparent !rounded-lg"
+                    />
+                </div>
+            </Dialog>
+            <Popover toggle={toggle} setToggle={setToggle}>
+                <button
+                    type="button"
+                    className={localClasses.Buttons}
+                    onClick={() => {
+                        setOpenRenameDialog(true);
+                    }}>
+                    Rename
+                </button>
+                <button
+                    type="button"
+                    className={localClasses.Buttons}
+                    onClick={async () => {
+                        console.log(path);
+                        await setDoc(
+                            doc(firestoreDb, path),
+                            { deleted: true },
+                            { merge: true }
+                        );
+                        toast.success("Successfully deleted!", {
+                            action: {
+                                label: "Undo",
+                                onClick: async () => {
+                                    await setDoc(
+                                        doc(firestoreDb, path),
+                                        { deleted: false },
+                                        { merge: true }
+                                    );
+                                },
+                            },
+                        });
+                    }}>
+                    Delete
+                </button>
+            </Popover>
+        </>
     );
 }

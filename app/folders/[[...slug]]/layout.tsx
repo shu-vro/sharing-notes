@@ -1,8 +1,5 @@
-import React from 'react'
-import { RefreshProvider } from "../components/RefreshContext";
+import React from "react";
 
-export default function Layout({children}: {children: React.ReactNode}) {
-  return (
-    <RefreshProvider>{children}</RefreshProvider>
-  )
+export default function Layout({ children }: { children: React.ReactNode }) {
+    return <>{children}</>;
 }

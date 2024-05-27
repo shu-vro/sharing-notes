@@ -3,15 +3,13 @@ import { acceptedExt, isValidFolderId } from "@/lib/utils";
 import { doc, getDoc } from "firebase/firestore";
 import { useParams } from "next/navigation";
 import React, { useState } from "react";
-import { useRefresh } from "../RefreshContext";
 import Dialog from "../Dialog";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { toast } from "sonner";
 
 export default function AddFile() {
     const params = useParams();
-    const { setRefresh } = useRefresh();
-    const [openFolderDialog, setOpenFolderDialog] = useState(false);
+    const [openFileDialog, setOpenFileDialog] = useState(false);
     const [fileName, setFileName] = useState("");
     const [file, setFile] = useState<File | null>(null);
 
@@ -60,8 +58,6 @@ export default function AddFile() {
                 console.log(error);
                 return toast.info(error.message);
             }
-
-            setRefresh(t => t + 1);
         } else {
             toast.info("Base Folder not found");
         }
@@ -70,8 +66,8 @@ export default function AddFile() {
         <>
             <Dialog
                 title="Create File"
-                open={openFolderDialog}
-                setOpen={setOpenFolderDialog}
+                open={openFileDialog}
+                setOpen={setOpenFileDialog}
                 onConfirm={async () => {
                     await onAddFolderClick(fileName);
                 }}>
@@ -128,7 +124,7 @@ export default function AddFile() {
                 type="button"
                 className="capitalize primary-border p-4"
                 onClick={() => {
-                    setOpenFolderDialog(true);
+                    setOpenFileDialog(true);
                     //  await onAddFolderClick()
                 }}>
                 <span>+</span>add file

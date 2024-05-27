@@ -8,16 +8,20 @@ import { BreadcrumbComponent } from "../components/BreadCrumb";
 import Ready from "../components/Ready";
 
 import React, { useState, useEffect } from "react";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+    collection,
+    getDocs,
+    onSnapshot,
+    query,
+    where,
+} from "firebase/firestore";
 import { firestoreDb } from "@/firebase";
-import { useRefresh } from "../components/RefreshContext";
 import FileSection from "../components/FileSection";
 
 export default function Page({ params }: { params: { slug: string[] } }) {
     const [folderData, setFolderData] = useState<any[]>([]);
     const [fileData, setFileData] = useState<any[]>([]);
     params.slug = params.slug || [];
-    const { refresh } = useRefresh();
 
     useEffect(() => {
         // process slug
@@ -32,35 +36,39 @@ export default function Page({ params }: { params: { slug: string[] } }) {
                 collection(firestoreDb, ...(slug as [string, ...string[]])),
                 where("type", "==", "folder")
             );
-            const querySnapshot = await getDocs(q);
-            let res: any[] = [];
-            querySnapshot.forEach(doc => {
-                res.push(doc.data());
+
+            onSnapshot(q, snapshot => {
+                let res: any[] = [];
+                snapshot.forEach(doc => {
+                    res.push(doc.data());
+                });
+                setFolderData(res);
             });
-            setFolderData(res);
         };
 
         fetchFolderData();
 
         const fetchFileData = async () => {
             if (slug.length > 1) {
-                slug.pop();
-                slug.push("files");
+                slug[slug.length - 1] = "files";
             }
             const q = query(
                 collection(firestoreDb, ...(slug as [string, ...string[]])),
-                where("type", "==", "file")
+                where("type", "==", "file"),
+                where("deleted", "==", false)
             );
-            const querySnapshot = await getDocs(q);
-            let res: any[] = [];
-            querySnapshot.forEach(doc => {
-                res.push(doc.data());
+
+            onSnapshot(q, snapshot => {
+                let res: any[] = [];
+                snapshot.forEach(doc => {
+                    res.push(doc.data());
+                });
+                setFileData(res);
             });
-            setFileData(res);
         };
 
         fetchFileData();
-    }, [params.slug, refresh]);
+    }, [params.slug]);
 
     return (
         <Ready>
@@ -86,14 +94,7 @@ export default function Page({ params }: { params: { slug: string[] } }) {
                 />
                 <h1 className="text-2xl my-7">Files</h1>
                 <div className="flex justify-start flex-wrap gap-6">
-                    <FileSection
-                        data={fileData}
-                        prevPath={
-                            params.slug?.length
-                                ? "/" + (params.slug?.join("/") || "")
-                                : ""
-                        }
-                    />
+                    <FileSection data={fileData} prevPath={params.slug || []} />
                 </div>
             </div>
         </Ready>
